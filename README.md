@@ -36,17 +36,42 @@ pip install -r requirements.txt
 
 **注意**: 如果未安装 Selenium，脚本会自动安装。
 
+## 项目结构
+
+```
+auto_login_cursor-agent/
+├── cursor_login/           # 核心包
+│   ├── __init__.py        # 包初始化
+│   ├── config.py          # 配置管理
+│   ├── database.py        # 数据库操作
+│   ├── api_key.py         # API Key 管理
+│   └── browser.py         # 浏览器自动化
+├── main.py                # 主入口（推荐使用）
+├── cursor_auto_login.py   # 兼容旧版的单文件脚本
+├── requirements.txt       # 依赖配置
+├── LICENSE               # MIT 许可证
+└── README.md             # 项目文档
+```
+
 ## 使用方法
 
-### 基础用法
+### 基础用法（推荐使用新入口）
 
 ```bash
 # 无头模式（后台运行，不显示浏览器界面）
-python3 cursor_auto_login.py
+python3 main.py
 
 # 显示浏览器界面
+python3 main.py --show
+python3 main.py --visible
+```
+
+### 兼容旧版（单文件方式）
+
+```bash
+# 仍然支持原有的单文件脚本
+python3 cursor_auto_login.py
 python3 cursor_auto_login.py --show
-python3 cursor_auto_login.py --visible
 ```
 
 ### 命令行参数
@@ -59,8 +84,23 @@ python3 cursor_auto_login.py --visible
 
 | 模式 | 命令 | 特点 |
 |------|------|------|
-| 无头模式 | `python3 cursor_auto_login.py` | 后台运行，自动关闭浏览器 |
-| 可视化模式 | `python3 cursor_auto_login.py --show` | 显示浏览器，保持打开状态 |
+| 无头模式 | `python3 main.py` | 后台运行，自动关闭浏览器 |
+| 可视化模式 | `python3 main.py --show` | 显示浏览器，保持打开状态 |
+
+### 作为 Python 模块使用
+
+```python
+from cursor_login import get_cursor_token, auto_login_with_selenium
+
+# 获取 Token
+info = get_cursor_token()
+
+# 自动登录（无头模式）
+success = auto_login_with_selenium(info, headless=True)
+
+# 自动登录（显示浏览器）
+success = auto_login_with_selenium(info, headless=False)
+```
 
 ## 工作流程
 
@@ -82,7 +122,7 @@ python3 cursor_auto_login.py --visible
 ~/Library/Application Support/Cursor/User/globalStorage/state.vscdb
 ```
 
-如果使用其他操作系统，请修改 `DB_PATH` 变量。
+如果使用其他操作系统，请修改 `cursor_login/config.py` 中的 `DB_PATH` 变量。
 
 ## API Key 配置
 
@@ -150,6 +190,14 @@ MIT License
 DanOps-1
 
 ## 更新日志
+
+### v2.0.0 (2025-12-09)
+- 重构为模块化架构
+- 将代码拆分为多个模块：config, database, api_key, browser
+- 添加 main.py 作为新的主入口
+- 保留 cursor_auto_login.py 以兼容旧版
+- 支持作为 Python 包导入使用
+- 改进代码组织和可维护性
 
 ### v1.0.0 (2024-10-24)
 - 初始版本发布
